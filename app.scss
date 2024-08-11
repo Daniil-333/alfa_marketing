@@ -1,0 +1,19 @@
+@use 'sass:math';
+
+@use './assets/scss/vars' as *;
+@use './assets/scss/breakpoints' as *;
+// @use './assets/scss/colors';
+// @use './assets/scss/mixins';
+
+@import './assets/scss/common';
+@import './assets/scss/reset';
+
+
+body {
+    font-family: "Play", sans-serif;
+    background: url(@img/decor/fon_big.jpg) no-repeat center/cover;
+
+    @supports (background-image: url(@img/decor/fon_big.webp)) {
+        background-image: url(@img/decor/fon_big.webp) no-repeat center/cover;
+    }
+}

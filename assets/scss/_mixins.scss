@@ -1,0 +1,123 @@
+@use 'sass:math';
+
+@function percent($px, $from) {
+  $result: math.div($px, $from) * 100%;
+  @return $result;
+}
+
+@function rem($px) {
+  $result: math.div($px, 16) + rem;
+  @return $result;
+}
+
+@function em($px, $current: 16) {
+  $result: math.div($px, $current) + em;
+  @return $result;
+}
+
+@mixin adaptiveValue($property , $startSize, $minSize, $widthFrom: $containerWidth, $widthTo: $minWidth, $keepSize: 0) {
+  $widthFromMedia: em($widthFrom);
+  $widthToMedia: em($widthTo);
+  $minSizeValue: rem($minSize);
+  $startSizeValue: rem($startSize);
+  $minWidth: math.div($minWidth, 16);
+  $maxWidth: math.div($maxWidth, 16);
+  $containerWidth: math.div($containerWidth, 16);
+  $addSize: math.div($startSize - $minSize, 16);
+  $widthTo: math.div($widthTo, 16);
+  $widthFrom: math.div($widthFrom, 16);
+  @if ($maxWidthContainer > 0 or $widthFrom != $containerWidth or $widthTo != $minWidth) and $widthFrom > $widthTo {
+    // Если стартовая ширина равна ширине контейнера + отступы,
+    // или указана настройка "keepSize" ставим значение
+    // по умолчанию равное стартовому размеру
+    @if $widthFrom == $containerWidth or $keepSize == 1 or $keepSize == 2 {
+      @media (min-width: $widthFromMedia) {
+        #{$property}: $startSizeValue;
+      }
+    }
+    // Адаптируем размер в промежутке между указанными ширинами вьюпорта
+    @media (min-width: $widthToMedia) and (max-width: $widthFromMedia) {
+      #{$property}: calc(#{$minSizeValue} + #{$addSize} * (((100vw - #{$widthTo + rem})) / ((#{$widthFrom - $widthTo}))));
+    }
+    // Если конечная ширина равна минимальной ширине
+    // или указана настройка "keepSize" ставим значение
+    // по умолчанию равное конечному размеру
+    @if $widthTo == $minWidth or $keepSize == 1 or $keepSize == 3 {
+      @media (max-width: $widthToMedia) {
+        #{$property}: $minSizeValue;
+      }
+    }
+  } @else {
+    // Режим работы по всей ширине вьюпорта
+    #{$property}: calc(#{$minSizeValue} + #{$addSize} * (((100vw - #{$widthTo + rem})) / ((#{$maxWidth - $widthTo}))));
+  }
+}
+
+@mixin tdu($background) {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -0.125rem;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 0%;
+    height: .063em;
+    display: inline-block;
+    background: $background;
+    border-radius: 10px;
+    transition: .4s;
+  }
+  &:hover::after {
+    width: 100%;
+  }
+}
+
+@mixin txtManyLine($count) {
+  display: -webkit-box;
+  -webkit-line-clamp: $count;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@mixin gradientText($bg) {
+  background: $bg;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@mixin preloaderForLazyLoad($bg) {
+  &::before {
+    content: "";
+    position: absolute;
+    left: calc(50% - 17.5px);
+    top: calc(50% - 17.5px);
+    width: 30px;
+    height: 30px;
+    border-radius: 10rem;
+    border: 3px solid #d5f3eb;
+    border-top-color: #52cbaa;
+    -webkit-animation: spin 1.5s infinite linear;
+    animation: spin 1.5s infinite linear;
+    z-index: 6;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: $bg;
+    z-index: 1;
+  }
+}
+
+@mixin box-shadow($x: 2px, $y: 2px, $blur: 5px, $color: rgba(0,0,0,.4), $inset: "") {
+  @if ($inset != "") {
+    @include css3-prefix('box-shadow', $inset $x $y $blur $color);
+  } @else {
+    @include css3-prefix('box-shadow', $x $y $blur $color);
+  }
+}

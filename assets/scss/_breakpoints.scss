@@ -1,0 +1,13 @@
+$minWidth: 360;
+$maxWidth: 1920;
+$maxWidthContainer: 1400;
+$containerPadding: 200;
+$containerWidth: $maxWidthContainer + $containerPadding;
+
+$desktop: ($containerWidth - 0.02) + px;
+$laptop: 1199.98 + px;
+$tabletL: 991.98 + px;
+$tabletM: 767.98 + px;
+$mobile: 575.98 + px;
+
+$fontFamily: "Play", "sans-serif";
